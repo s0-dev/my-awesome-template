@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "changelog": "Journey"
+  },
+  "skipToContent": "Skip to content",
+  "seo": {
+    "home": {
+      "title": "your page title",
+      "description": "your page description"
+    },
+    "projects": {
+      "title": "Featured Projects",
+      "description": "Explore my featured mobile development projects and their technical details"
+    },
+    "changelog": {
+      "title": "Career Journey",
+      "description": "My professional journey in IT from 2020 to 2025"
+    }
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "dark": "Dark mode",
+    "light": "Light mode"
+  },
+  "language": {
+    "switchTo": "Switch to {lang}",
+    "english": "English",
+    "spanish": "Español"
+  }
+}

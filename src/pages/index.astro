@@ -1,0 +1,63 @@
+---
+// Root page that handles language detection and redirection
+import { i18nConfig } from "../config"
+---
+
+<script
+  is:inline
+  define:vars={{
+    supportedLanguages: i18nConfig.supportedLanguages,
+    storageKey: i18nConfig.storageKey,
+    defaultLanguage: i18nConfig.defaultLanguage,
+  }}
+>
+  // Language detection function
+  function getPreferredLanguage() {
+    // First check localStorage (user's explicit choice)
+    const savedLang = localStorage.getItem(storageKey)
+    if (savedLang && supportedLanguages.includes(savedLang)) {
+      return savedLang
+    }
+
+    // Check browser languages
+    const browserLangs = navigator.languages || [
+      navigator.language || navigator.userLanguage,
+    ]
+
+    // Check if any of the browser's preferred languages start with 'es'
+    for (const lang of browserLangs) {
+      if (lang.toLowerCase().startsWith("es")) {
+        return "es"
+      }
+    }
+
+    // Default to English for all other languages
+    return defaultLanguage
+  }
+
+  // Get language and redirect
+  const targetLang = getPreferredLanguage()
+  window.location.href = `/${targetLang}/`
+</script>
+
+<!-- Accessibility & SEO improvements -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redirecting to your preferred language</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="/en/" />
+    <link rel="alternate" hreflang="en" href="/en/" />
+    <link rel="alternate" hreflang="es" href="/es/" />
+    <link rel="alternate" hreflang="x-default" href="/en/" />
+
+    <!-- Fallback for no JavaScript -->
+    <meta http-equiv="refresh" content="0;url=/en/" />
+  </head>
+  <body>
+    <p>
+      Redirecting to your preferred language... <a href="/en/">Click here</a> if
+      you are not redirected automatically.
+    </p>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+---
+import ThemeToggle from "./ThemeToggle.astro"
+import LanguageSwitcher from "./LanguageSwitcher.astro"
+import { useTranslations } from "../../utils/i18n"
+import type { ThemeOption } from "../../config"
+import type { SupportedLanguage } from "../../config"
+
+interface Props {
+  currentTheme: ThemeOption
+  currentLang: SupportedLanguage
+}
+
+const { currentTheme, currentLang } = Astro.props
+const t = useTranslations(currentLang)
+---
+
+<nav class="bg-background border-b border-gray-200 dark:border-gray-700">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <div class="flex">
+        <a href={`/${currentLang}/`} class="flex-shrink-0 flex items-center">
+          <span class="text-primary font-bold text-xl">Your Logo</span>
+        </a>
+
+        <div class="ml-10 flex items-center space-x-4">
+          <a href={`/${currentLang}/`} class="px-3 py-2 text-sm font-medium">
+            {t("nav.home")}
+          </a>
+          <!-- href={`/${currentLang}/projects`} -->
+          <a href={``} class="px-3 py-2 text-sm font-medium">
+            {t("nav.projects")}
+          </a>
+          <!-- href={`/${currentLang}/changelog`} -->
+          <a href={``} class="px-3 py-2 text-sm font-medium">
+            {t("nav.changelog")}
+          </a>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <LanguageSwitcher
+          currentLang={currentLang}
+          currentPath={Astro.url.pathname}
+        />
+        <ThemeToggle currentTheme={currentTheme} currentLang={currentLang} />
+      </div>
+    </div>
+  </div>
+</nav>

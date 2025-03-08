@@ -1,0 +1,113 @@
+---
+import "../styles/global.css"
+import Navbar from "../components/ui/Navbar.astro"
+import { getInitialTheme } from "../utils/theme"
+import { useTranslations } from "../utils/i18n"
+import { siteConfig } from "../config"
+import type { SupportedLanguage } from "../config"
+
+export interface Props {
+  title: string
+  description: string
+  image?: string
+  lang: SupportedLanguage
+}
+
+const {
+  title,
+  description,
+  image = siteConfig.defaultImage,
+  lang,
+} = Astro.props
+
+// Get translations for current language
+const t = useTranslations(lang)
+
+// Get initial theme (server-side only)
+const initialTheme = getInitialTheme()
+
+// Define site URL safely
+const siteUrl = Astro.site ? Astro.site.toString() : siteConfig.url
+
+// Create language alternate path
+const currentPath = Astro.url.pathname
+const alternateLang = lang === "en" ? "es" : "en"
+const alternatePath = currentPath.replace(
+  new RegExp(`^/${lang}/?`),
+  `/${alternateLang}/`
+)
+
+// Image URL
+const imageUrl = image.startsWith("http")
+  ? image
+  : `${siteUrl}${image.startsWith("/") ? image : `/${image}`}`
+---
+
+<!doctype html>
+<html
+  lang={lang}
+  data-theme={initialTheme}
+  class={initialTheme === "dark" ? "dark" : "light"}
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} | {siteConfig.name}</title>
+    <meta name="description" content={description} />
+
+    <!-- SEO Meta Tags -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={`${siteUrl}${currentPath}`} />
+    <meta property="og:locale" content={lang === "en" ? "en_US" : "es_ES"} />
+
+    <!-- Language alternates for SEO -->
+    <link
+      rel="alternate"
+      href={`${siteUrl}${alternatePath}`}
+      hreflang={alternateLang}
+    />
+    <link rel="alternate" href={`${siteUrl}${currentPath}`} hreflang={lang} />
+    <link rel="alternate" href={`${siteUrl}/en/`} hreflang="x-default" />
+
+    <!-- CRITICAL: Theme handling script -->
+    <script is:inline>
+      // Get theme from localStorage and apply it immediately
+      ;(function () {
+        const savedTheme = localStorage.getItem("theme")
+        if (savedTheme === "dark" || savedTheme === "light") {
+          document.documentElement.className =
+            savedTheme === "dark" ? "dark" : "light"
+          document.documentElement.setAttribute("data-theme", savedTheme)
+        }
+      })()
+    </script>
+  </head>
+  <body class="bg-base text-primary min-h-screen">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:p-4 focus:bg-primary focus:text-white focus:z-50"
+    >
+      {t("skipToContent")}
+    </a>
+
+    <Navbar currentTheme={initialTheme} currentLang={lang} />
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <!-- Global theme handling script -->
+    <script>
+      document.addEventListener("themeChange", (event) => {
+        const newTheme = (event as CustomEvent).detail.theme
+        document.documentElement.className =
+          newTheme === "dark" ? "dark" : "light"
+        document.documentElement.setAttribute("data-theme", newTheme)
+        localStorage.setItem("theme", newTheme)
+      })
+    </script>
+  </body>
+</html>

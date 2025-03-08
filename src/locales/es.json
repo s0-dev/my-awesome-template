@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "about": "Sobre mi",
+    "projects": "Proyectos",
+    "changelog": "Trayectoria"
+  },
+  "skipToContent": "Ir al contenido",
+  "seo": {
+    "home": {
+      "title": "el titulo de tu pagina",
+      "description": "la descripcion de tu pagina"
+    },
+    "projects": {
+      "title": "Proyectos destacados",
+      "description": "Explora mis proyectos"
+    },
+    "changelog": {
+      "title": "Mi trayectoria de carrera",
+      "description": "Mi trayectoria profesional desde 2020 hastaa 2025"
+    }
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "dark": "Dark mode",
+    "light": "Light mode"
+  },
+  "language": {
+    "switchTo": "Cambiar a {lang}",
+    "english": "English",
+    "spanish": "Español"
+  }
+}

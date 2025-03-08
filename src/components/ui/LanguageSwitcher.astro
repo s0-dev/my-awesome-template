@@ -1,0 +1,62 @@
+---
+import { useTranslations, createLanguageUrl } from "../../utils/i18n"
+import { i18nConfig } from "../../config"
+import type { SupportedLanguage } from "../../config"
+
+interface Props {
+  currentLang: SupportedLanguage
+  currentPath: string
+}
+
+const { currentLang, currentPath } = Astro.props
+const t = useTranslations(currentLang)
+
+// Determine the language to switch to
+const targetLang: SupportedLanguage = currentLang === "en" ? "es" : "en"
+const targetLanguageName =
+  targetLang === "en" ? t("language.english") : t("language.spanish")
+const targetUrl = createLanguageUrl(currentPath, targetLang)
+---
+
+<div class="language-switcher relative">
+  <button
+    id="language-switch-button"
+    type="button"
+    aria-label={t("language.switchTo").replace("{lang}", targetLanguageName)}
+    class="flex items-center justify-center px-3 py-1 rounded-md border border-primary dark:border-secondary focus:outline-none focus:ring-2 focus:ring-accent"
+  >
+    <span class="font-roboto-mono text-sm">{targetLang.toUpperCase()}</span>
+  </button>
+</div>
+
+<script
+  define:vars={{
+    supportedLanguages: i18nConfig.supportedLanguages,
+    storageKey: i18nConfig.storageKey,
+  }}
+>
+  document.addEventListener("DOMContentLoaded", () => {
+    const languageSwitch = document.getElementById("language-switch-button")
+
+    if (languageSwitch) {
+      languageSwitch.addEventListener("click", () => {
+        // Get current language from URL
+        const path = window.location.pathname
+        const segments = path.split("/").filter(Boolean)
+        const currentLang = segments[0]
+        const targetLang = currentLang === "en" ? "es" : "en"
+
+        // Save the language preference
+        localStorage.setItem(storageKey, targetLang)
+
+        // Navigate to the same page in the new language
+        if (supportedLanguages.includes(currentLang)) {
+          segments[0] = targetLang
+          window.location.href = `/${segments.join("/")}`
+        } else {
+          window.location.href = `/${targetLang}${path}`
+        }
+      })
+    }
+  })
+</script>

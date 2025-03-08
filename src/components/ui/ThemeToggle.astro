@@ -1,0 +1,57 @@
+---
+import { useTranslations } from "../../utils/i18n"
+import type { ThemeOption } from "../../config"
+
+interface Props {
+  currentTheme: ThemeOption
+  currentLang: "en" | "es"
+}
+
+const { currentTheme, currentLang } = Astro.props
+const t = useTranslations(currentLang)
+
+const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`
+
+const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`
+
+const isDark = currentTheme === "dark"
+---
+
+<button
+  id="theme-toggle"
+  type="button"
+  aria-label={t("theme.toggle")}
+  class="flex items-center justify-center w-8 h-8 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background transition-colors"
+>
+  <span class="dark:hidden" aria-hidden="true" set:html={sunIcon} />
+  <span class="hidden dark:block" aria-hidden="true" set:html={moonIcon} />
+</button>
+
+<script>
+  // Handle theme toggling
+  document.addEventListener("DOMContentLoaded", () => {
+    const themeToggle = document.getElementById("theme-toggle")
+
+    if (themeToggle) {
+      themeToggle.addEventListener("click", () => {
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme") || "light"
+        const newTheme = currentTheme === "dark" ? "light" : "dark"
+
+        // Update DOM
+        document.documentElement.setAttribute("data-theme", newTheme)
+        document.documentElement.classList.remove(currentTheme)
+        document.documentElement.classList.add(newTheme)
+
+        // Save preference
+        localStorage.setItem("theme", newTheme)
+
+        // Dispatch a custom event
+        const event = new CustomEvent("themeChange", {
+          detail: { theme: newTheme },
+        })
+        document.dispatchEvent(event)
+      })
+    }
+  })
+</script>
